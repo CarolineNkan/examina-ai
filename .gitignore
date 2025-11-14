@@ -1,0 +1,19 @@
+# Python venv
+venv/
+venv310/
+env/
+*.pyc
+__pycache__/
+
+# VS Code junk
+.vscode/
+
+# Streamlit cache
+.streamlit/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
