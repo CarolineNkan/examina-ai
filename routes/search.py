@@ -1,15 +1,31 @@
-from duckduckgo_search import DDGS
+import requests
 
-def expand_context(user_notes):
-    """Uses DuckDuckGo search to add context without needing an API key."""
+def expand_context(query):
+    """
+    Uses DuckDuckGo Instant Answer API for lightweight context.
+    No API key needed.
+    """
+    url = "https://api.duckduckgo.com/"
+    params = {
+        "q": query,
+        "format": "json",
+        "no_html": "1",
+        "no_redirect": "1"
+    }
 
-    query = f"explain this topic for students: {user_notes}"
+    try:
+        r = requests.get(url, params=params).json()
 
-    # Perform the search
-    results = DDGS().text(query, max_results=5)
+        abstract = r.get("AbstractText") or ""
 
-    # Extract the text snippets
-    snippets = [r.get("body", "") for r in results]
+        related = " ".join(
+            topic.get("Text", "")
+            for topic in r.get("RelatedTopics", [])
+            if isinstance(topic, dict)
+        )
 
-    # Return combined context
-    return "\n".join(snippets[:3])
+        combined = f"{abstract}\n{related}".strip()
+        return combined if combined else "No additional context found."
+    except:
+        return "No context found."
+
